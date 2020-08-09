@@ -1,9 +1,9 @@
 (ns image-organizer.core
   (:require [clojure.java.io :as io]
             [clojure.string :as string]
+            [fn-fx.fx-dom :as dom]
             [fn-fx.controls :as ui]
             [fn-fx.diff :refer [component defui render should-update?]]
-            [fn-fx.fx-dom :as dom]
             [me.raynes.fs :as fs]))
 
 (def folder-to-organize "/Users/seledrex/Desktop/to-sort")
@@ -152,21 +152,29 @@
           (fs/mkdir (str output-folder "/" subfolder)))
         sorting-folders)))
 
-(defn -main
-  [& args]
-  (let [data-state (atom {:image-files (load-image-files folder-to-organize)
-                          :undo-history []})
-        handler-fn (fn [{:keys [event] :as all-data}]
-                     (case event
-                       :organize (handle-organize data-state (:sf all-data))
-                       :skip (handle-skip data-state)
-                       :undo (handle-undo data-state)))
-        ui-state (agent (dom/app (stage @data-state) handler-fn))]
-    (create-sorting-folders)
-    (add-watch data-state :ui (fn [_ _ _ _]
-                                (send ui-state
-                                      (fn [old-ui]
-                                        (dom/update-app old-ui (stage @data-state))))))))
+(def initial-state
+  {:root-stage? true
+   :image-files []
+   :undo-history []})
+
+(defonce data-state (atom initial-state))
+
+(defn start
+  ([] (start {:root-stage? true}))
+  ([{:keys [root-stage?]}]
+   (swap! data-state assoc :root-stage? root-stage?)
+   (swap! data-state assoc :image-files (load-image-files folder-to-organize))
+   (let [handler-fn (fn [{:keys [event] :as all-data}]
+                      (case event
+                        :organize (handle-organize data-state (:sf all-data))
+                        :skip (handle-skip data-state)
+                        :undo (handle-undo data-state)))
+         ui-state (agent (dom/app (stage @data-state) handler-fn))]
+     (create-sorting-folders)
+     (add-watch data-state :ui (fn [_ _ _ _]
+                                 (send ui-state
+                                       (fn [old-ui]
+                                         (dom/update-app old-ui (stage @data-state)))))))))
 
 (comment
   (-main)

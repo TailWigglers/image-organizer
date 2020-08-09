@@ -6,7 +6,7 @@
   :dependencies [[clj-commons/fs "1.5.2"]
                  [fn-fx/fn-fx-openjfx11 "0.5.0-SNAPSHOT"]
                  [org.clojure/clojure "1.10.1"]]
-  :main ^:skip-aot image-organizer.core
+  :main image-organizer.main
+  :aot [image-organizer.main]
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all
-                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
+  :profiles {:uberjar {:aot :all}})
