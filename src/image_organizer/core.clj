@@ -2,12 +2,18 @@
   (:require [cljfx.api :as fx]
             [image-organizer.events :as events]
             [image-organizer.views :as views]
-            [image-organizer.util :as util]))
+            [image-organizer.util :as util]
+            [clojure.java.io :as io]))
 
 (def *state
   (atom
-   {:image-files []
-    :undo-history []}))
+   {:categories ["M" "F" "MM" "MF" "FF" "Group" "SFW" "Delete" "Vore" "Herm"]
+    :image-files []
+    :undo-history []
+    :button-height 40
+    :image-view-width 1280
+    :image-view-height 660
+    :loaded-image nil}))
 
 (def event-handler
   (-> events/event-handler
@@ -23,9 +29,10 @@
    :opts {:fx.opt/map-event-handler event-handler}))
 
 (defn run []
-  (swap! *state assoc :image-files (util/load-image-files events/folder-to-organize))
-  (util/create-subfolders events/output-folder views/sorting-folders)
+  (event-handler {:event/type ::events/initialize})
   (fx/mount-renderer *state renderer))
 
 (run)
+
+
 

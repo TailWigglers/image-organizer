@@ -3,58 +3,65 @@
             [clojure.java.io :as io]
             [image-organizer.events :as events]))
 
-(def sorting-folders ["M" "F" "MM" "MF" "FF" "Group" "SFW" "Delete" "Vore" "Herm"])
-(def total-buttons (+ 2 (count sorting-folders)))
-(def application-width 1280)
-(def application-height 720)
-(def button-width (double (/ application-width total-buttons)))
-(def button-height 40)
-(def image-height (- application-height button-height))
-
-(defn image-display [image-files]
+(defn image-view
+  [image-files width height loaded-image]
   {:fx/type :image-view
    :image {:fx/type :image
-           :is (io/input-stream (first image-files))}
+           :is loaded-image}
    :x 0
    :y 0
-   :fit-width application-width
-   :fit-height image-height
+   :fit-width width
+   :fit-height height
    :preserve-ratio true})
 
-(defn root [{:keys [image-files undo-history]}]
+(defn root
+  [{:keys [categories
+           image-files
+           undo-history
+           button-height
+           image-view-width
+           image-view-height
+           loaded-image]}]
   (let [finished? (empty? image-files)]
     {:fx/type :stage
      :showing true
      :title "Image Organizer"
-     :min-width application-width
-     :min-height application-height
-     :resizable false
+     :min-width 1280
+     :min-height 720
      :scene {:fx/type :scene
+             :on-width-changed {:event/type ::events/scene-width}
+             :on-height-changed {:event/type ::events/scene-height}
              :root {:fx/type :border-pane
                     :center (if finished?
                               {:fx/type :label
                                :text "No images left to organize!"}
-                              (image-display image-files))
+                              (image-view image-files
+                                          image-view-width
+                                          image-view-height
+                                          loaded-image))
                     :bottom {:fx/type :h-box
                              :children (concat
                                         (map (fn [sf]
                                                {:fx/type :button
                                                 :text sf
-                                                :pref-width button-width
+                                                :h-box/hgrow :always
+                                                :max-width java.lang.Double/MAX_VALUE
                                                 :pref-height button-height
                                                 :disable finished?
                                                 :on-action {:event/type ::events/organize
                                                             :sf sf}})
-                                             sorting-folders)
+                                             categories)
                                         [{:fx/type :button
                                           :text "Skip"
-                                          :pref-width button-width
+                                          :h-box/hgrow :always
+                                          :max-width java.lang.Double/MAX_VALUE
                                           :pref-height button-height
                                           :disable finished?
                                           :on-action {:event/type ::events/skip}}
                                          {:fx/type :button
                                           :text "Undo"
-                                          :pref-width button-width
+                                          :h-box/hgrow :always
+                                          :max-width java.lang.Double/MAX_VALUE
                                           :pref-height button-height
                                           :disable (empty? undo-history)
                                           :on-action {:event/type ::events/undo}}])}}}}))
