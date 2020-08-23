@@ -1,9 +1,7 @@
 (ns image-organizer.core
   (:require [cljfx.api :as fx]
             [image-organizer.events :as events]
-            [image-organizer.views :as views]
-            [image-organizer.util :as util]
-            [clojure.java.io :as io]))
+            [image-organizer.views :as views]))
 
 (def *state
   (atom
@@ -28,11 +26,13 @@
    :middleware (fx/wrap-map-desc assoc :fx/type views/root)
    :opts {:fx.opt/map-event-handler event-handler}))
 
-(defn run []
-  (event-handler {:event/type ::events/initialize})
-  (fx/mount-renderer *state renderer))
+(def app
+  (do
+    (event-handler {:event/type ::events/initialize})
+    (fx/create-app *state
+                   :event-handler event-handler
+                   :desc-fn views/root)))
 
-(run)
 
 
 
