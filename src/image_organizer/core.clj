@@ -4,9 +4,6 @@
             [image-organizer.views :as views]
             [image-organizer.util :as util]))
 
-(def folder-to-organize "/Users/seledrex/Desktop/to-sort")
-(def output-folder "/Users/seledrex/Desktop/output")
-
 (def *state
   (atom
    {:image-files []
@@ -26,8 +23,8 @@
    :opts {:fx.opt/map-event-handler event-handler}))
 
 (defn run []
-  (swap! *state assoc :image-files (util/load-image-files folder-to-organize))
-  (util/create-subfolders output-folder views/sorting-folders)
+  (swap! *state assoc :image-files (util/load-image-files events/folder-to-organize))
+  (util/create-subfolders events/output-folder views/sorting-folders)
   (fx/mount-renderer *state renderer))
 
 (run)

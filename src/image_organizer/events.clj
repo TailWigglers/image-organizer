@@ -1,6 +1,8 @@
 (ns image-organizer.events
-  (:require [me.raynes.fs :as fs]
-            [image-organizer.core :refer [output-folder folder-to-organize]]))
+  (:require [me.raynes.fs :as fs]))
+
+(def folder-to-organize "/Users/seledrex/Desktop/to-sort")
+(def output-folder "/Users/seledrex/Desktop/output")
 
 (defmulti event-handler :event/type)
 
