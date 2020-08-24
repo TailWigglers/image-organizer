@@ -20,3 +20,11 @@
    (map (fn [subfolder]
           (fs/mkdir (str folder "/" subfolder)))
         subfolders)))
+
+(defn read-properties []
+  (try
+    (read-string (slurp "properties.edn"))
+    (catch Exception e e)))
+
+(defn stack-trace->string [stack-trace]
+  (with-out-str (clojure.stacktrace/print-stack-trace stack-trace)))

@@ -5,13 +5,16 @@
 
 (def *state
   (atom
-   {:categories ["M" "F" "MM" "MF" "FF" "Group" "SFW" "Delete" "Vore" "Herm"]
+   {:categories []
+    :input-folder ""
+    :output-folder ""
     :image-files []
     :undo-history []
     :button-height 40
     :image-view-width 1280
     :image-view-height 660
-    :loaded-image nil}))
+    :loaded-image nil
+    :error? false}))
 
 (def event-handler
   (-> events/event-handler
@@ -31,8 +34,4 @@
     (event-handler {:event/type ::events/initialize})
     (fx/create-app *state
                    :event-handler event-handler
-                   :desc-fn views/root)))
-
-
-
-
+                   :desc-fn views/desc)))

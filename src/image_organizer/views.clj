@@ -65,3 +65,41 @@
                                           :pref-height button-height
                                           :disable (empty? undo-history)
                                           :on-action {:event/type ::events/undo}}])}}}}))
+
+(defn alert
+  [{:keys [error-message stack-trace]}]
+  {:fx/type :dialog
+   :showing true
+   :title "Error"
+   :resizable true
+   :dialog-pane {:fx/type :dialog-pane
+                 :header-text "An error has occured."
+                 :content-text error-message
+                 :button-types [:ok]
+                 :style-class ["alert" "error" "dialog-pane"]
+                 :expandable-content {:fx/type :grid-pane
+                                      :max-width java.lang.Double/MAX_VALUE
+                                      :children [{:fx/type :label
+                                                  :text "The exception stacktrace was:"
+                                                  :grid-pane/column 0
+                                                  :grid-pane/row 0}
+                                                 {:fx/type :text-area
+                                                  :text stack-trace
+                                                  :editable false
+                                                  :wrap-text true
+                                                  :max-width java.lang.Double/MAX_VALUE
+                                                  :max-height java.lang.Double/MAX_VALUE
+                                                  :grid-pane/vgrow :always
+                                                  :grid-pane/hgrow :always
+                                                  :grid-pane/column 0
+                                                  :grid-pane/row 1}]}}})
+
+(defn desc
+  [{:keys [error?] :as state}]
+  (if error?
+    (alert state)
+    (root state)))
+
+
+
+

@@ -3,9 +3,6 @@
             [clojure.java.io :as io]
             [image-organizer.util :as util]))
 
-(def folder-to-organize "/Users/seledrex/Desktop/to-sort")
-(def output-folder "/Users/seledrex/Desktop/output")
-
 (defmulti event-handler :event/type)
 
 (defmethod event-handler :default [event]
@@ -13,14 +10,26 @@
 
 (defmethod event-handler ::initialize
   [{:keys [state]}]
-  (let [image-files (util/load-image-files folder-to-organize)
-        loaded-image (if (empty? image-files)
-                       nil
-                       (io/input-stream (first image-files)))]
-    (util/create-subfolders output-folder (:categories state))
-    {:state (-> state
-                (assoc :image-files image-files)
-                (assoc :loaded-image loaded-image))}))
+  (let [properties (util/read-properties)]
+    (if (instance? Exception properties)
+      {:state (-> state
+                  (assoc :error? true)
+                  (assoc :error-message (.getMessage properties))
+                  (assoc :stack-trace (util/stack-trace->string properties)))}
+      (let [{:keys [categories
+                    input-folder
+                    output-folder]} properties
+            image-files (util/load-image-files input-folder)
+            loaded-image (if (empty? image-files)
+                           nil
+                           (io/input-stream (first image-files)))]
+        (util/create-subfolders output-folder categories)
+        {:state (-> state
+                    (assoc :categories categories)
+                    (assoc :input-folder input-folder)
+                    (assoc :output-folder output-folder)
+                    (assoc :image-files image-files)
+                    (assoc :loaded-image loaded-image))}))))
 
 (defmethod event-handler ::scene-width
   [{scene-width :fx/event state :state}]
@@ -37,7 +46,9 @@
   (let [image-files (:image-files state)]
     (if (empty? image-files)
       {:state state}
-      (let [image-file (first image-files)
+      (let [input-folder (:input-folder state)
+            output-folder (:output-folder state)
+            image-file (first image-files)
             next-image-file (second image-files)
             loaded-image (if (nil? next-image-file)
                            nil
@@ -51,7 +62,7 @@
                     (assoc :loaded-image loaded-image)
                     (update :undo-history #(conj % {:event-type :organize
                                                     :name image-name
-                                                    :from folder-to-organize
+                                                    :from input-folder
                                                     :to destination-folder})))}))))
 
 (defmethod event-handler ::skip
