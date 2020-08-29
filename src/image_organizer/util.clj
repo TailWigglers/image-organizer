@@ -65,7 +65,8 @@
   "Reads the properties file. This will either return a map containing
    the data of the properties file or an exception if there was an error"
   []
-  (let [properties (try-it (read-string (slurp "properties.edn")))]
+  (let [home-dir (System/getProperty "user.home")
+        properties (try-it (read-string (slurp (str home-dir "/properties.edn"))))]
     (if (instance? Exception properties)
       properties
       (if (s/valid? ::properties properties)

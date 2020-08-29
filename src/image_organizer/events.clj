@@ -29,9 +29,7 @@
                     input-folder
                     output-folder]} properties
             image-files (util/load-image-files input-folder)
-            loaded-image (if (empty? image-files)
-                           nil
-                           (util/stream (first image-files)))]
+            loaded-image (util/stream (first image-files))]
         (with-exception-handling
           loaded-image state
           (util/create-subfolders output-folder categories)
