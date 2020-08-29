@@ -1,7 +1,8 @@
 (ns image-organizer.views
   (:require [cljfx.api :as fx]
             [clojure.java.io :as io]
-            [image-organizer.events :as events]))
+            [image-organizer.events :as events]
+            [image-organizer.util :as util]))
 
 (defn image-view
   [image-files width height loaded-image]
@@ -67,39 +68,37 @@
                                           :on-action {:event/type ::events/undo}}])}}}}))
 
 (defn alert
-  [{:keys [error-message stack-trace]}]
-  {:fx/type :dialog
-   :showing true
-   :title "Error"
-   :resizable true
-   :dialog-pane {:fx/type :dialog-pane
-                 :header-text "An error has occured."
-                 :content-text error-message
-                 :button-types [:ok]
-                 :style-class ["alert" "error" "dialog-pane"]
-                 :expandable-content {:fx/type :grid-pane
-                                      :max-width java.lang.Double/MAX_VALUE
-                                      :children [{:fx/type :label
-                                                  :text "The exception stacktrace was:"
-                                                  :grid-pane/column 0
-                                                  :grid-pane/row 0}
-                                                 {:fx/type :text-area
-                                                  :text stack-trace
-                                                  :editable false
-                                                  :wrap-text true
-                                                  :max-width java.lang.Double/MAX_VALUE
-                                                  :max-height java.lang.Double/MAX_VALUE
-                                                  :grid-pane/vgrow :always
-                                                  :grid-pane/hgrow :always
-                                                  :grid-pane/column 0
-                                                  :grid-pane/row 1}]}}})
+  [{:keys [exception]}]
+  (let [error-message (.getMessage exception)
+        stack-trace (util/exception->stack-trace-string exception)]
+    {:fx/type :dialog
+     :showing true
+     :title "Error"
+     :resizable true
+     :dialog-pane {:fx/type :dialog-pane
+                   :header-text "An error has occured."
+                   :content-text error-message
+                   :button-types [:ok]
+                   :style-class ["alert" "error" "dialog-pane"]
+                   :expandable-content {:fx/type :grid-pane
+                                        :max-width java.lang.Double/MAX_VALUE
+                                        :children [{:fx/type :label
+                                                    :text "The exception stacktrace was:"
+                                                    :grid-pane/column 0
+                                                    :grid-pane/row 0}
+                                                   {:fx/type :text-area
+                                                    :text stack-trace
+                                                    :editable false
+                                                    :wrap-text true
+                                                    :max-width java.lang.Double/MAX_VALUE
+                                                    :max-height java.lang.Double/MAX_VALUE
+                                                    :grid-pane/vgrow :always
+                                                    :grid-pane/hgrow :always
+                                                    :grid-pane/column 0
+                                                    :grid-pane/row 1}]}}}))
 
 (defn desc
   [{:keys [error?] :as state}]
   (if error?
     (alert state)
     (root state)))
-
-
-
-

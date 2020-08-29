@@ -14,7 +14,8 @@
     :image-view-width 1280
     :image-view-height 660
     :loaded-image nil
-    :error? false}))
+    :error? false
+    :exception nil}))
 
 (def event-handler
   (-> events/event-handler

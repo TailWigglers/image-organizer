@@ -14,8 +14,7 @@
     (if (instance? Exception properties)
       {:state (-> state
                   (assoc :error? true)
-                  (assoc :error-message (.getMessage properties))
-                  (assoc :stack-trace (util/stack-trace->string properties)))}
+                  (assoc :exception properties))}
       (let [{:keys [categories
                     input-folder
                     output-folder]} properties
