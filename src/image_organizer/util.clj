@@ -2,7 +2,10 @@
   (:require [clojure.spec.alpha :as s]
             [clojure.string :as string]
             [me.raynes.fs :as fs]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clojure.stacktrace :as cs]))
+
+(def supported-extensions ["png" "jpg" "jpeg"])
 
 (s/def
   ::categories
@@ -22,7 +25,13 @@
                    ::input-folder
                    ::output-folder]))
 
-(def supported-extensions ["png" "jpg" "jpeg"])
+(defmacro try-it
+  "Tries to evaluate a function and returns the result or an exception"
+  [fun]
+  (let [e (gensym 'e)]
+    `(try
+       ~fun
+       (catch Exception ~e ~e))))
 
 (defn has-extension?
   "Checks if a filename has a given extension"
@@ -63,20 +72,12 @@
         properties
         (Exception. "Could not parse properties file")))))
 
-(defmacro try-it
-  "Tries to evaluate a function and returns the result or an exception"
-  [fun]
-  (let [e (gensym 'e)]
-    `(try
-       ~fun
-       (catch Exception ~e ~e))))
-
 (defn exception->stack-trace-string
   "Converts an exception into a stack trace string"
   [e]
-  (with-out-str (clojure.stacktrace/print-stack-trace e)))
+  (with-out-str (cs/print-stack-trace e)))
 
-(defn load-file
+(defn stream
   "Loads an image from a file"
   [file]
   (if (nil? file)

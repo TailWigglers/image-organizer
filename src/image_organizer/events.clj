@@ -28,7 +28,7 @@
             image-files (util/load-image-files input-folder)
             loaded-image (if (empty? image-files)
                            nil
-                           (util/load-file (first image-files)))]
+                           (util/stream (first image-files)))]
         (with-exception-handling
           loaded-image state
           (util/create-subfolders output-folder categories)
@@ -64,7 +64,7 @@
           maybe-exception state
           (let [input-folder (:input-folder state)
                 next-image-file (second image-files)
-                loaded-image (util/load-file next-image-file)]
+                loaded-image (util/stream next-image-file)]
             (with-exception-handling
               loaded-image state
               {:state (-> state
@@ -82,7 +82,7 @@
       {:state state}
       (let [image-file (first image-files)
             next-image-file (second image-files)
-            loaded-image (util/load-file next-image-file)]
+            loaded-image (util/stream next-image-file)]
         (with-exception-handling
           loaded-image state
           {:state (-> state
@@ -108,7 +108,7 @@
                 maybe-extension (fs/move image-file destination-file)]
             (with-exception-handling
               maybe-extension state
-              (let [loaded-image (util/load-file destination-file)]
+              (let [loaded-image (util/stream destination-file)]
                 (with-exception-handling
                   loaded-image state
                   {:state (-> state
@@ -117,7 +117,7 @@
                               (update :undo-history pop))}))))
           :skip
           (let [previous-image-file (:image-file last-event)
-                loaded-image (util/load-file previous-image-file)]
+                loaded-image (util/stream previous-image-file)]
             (with-exception-handling
               loaded-image state
               {:state (-> state
