@@ -3,6 +3,15 @@
             [clojure.java.io :as io]
             [image-organizer.util :as util]))
 
+(defmacro with-exception-handling
+  "Handles possible exceptions when updating state"
+  [maybe-exception state & body]
+  `(if (instance? Exception ~maybe-exception)
+     {:state (-> ~state
+                 (assoc :error? true)
+                 (assoc :exception ~maybe-exception))}
+     (do ~@body)))
+
 (defmulti event-handler :event/type)
 
 (defmethod event-handler :default [event]
