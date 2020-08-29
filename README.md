@@ -17,12 +17,8 @@ cd image-organizer
 
 ## Usage
 
-Run the executable created during the build process.
-`properties.edn` needs to be placed in the home directory.
-
-## Options
-
-FIXME: listing of options this app accepts.
+Run the executable created during the build process. Application configuration
+is read from `properties.edn`, and this needs to be placed in the home directory.
 
 ## Examples
 
