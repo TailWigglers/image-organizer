@@ -1,7 +1,8 @@
 (ns image-organizer.util
   (:require [clojure.spec.alpha :as s]
             [clojure.string :as string]
-            [me.raynes.fs :as fs]))
+            [me.raynes.fs :as fs]
+            [clojure.java.io :as io]))
 
 (s/def
   ::categories
@@ -55,21 +56,27 @@
   "Reads the properties file. This will either return a map containing
    the data of the properties file or an exception if there was an error"
   []
-  (let [properties (try-it #(read-string (slurp "properties.edn")))]
+  (let [properties (try-it (read-string (slurp "properties.edn")))]
     (if (instance? Exception properties)
       properties
       (if (s/valid? ::properties properties)
         properties
         (Exception. "Could not parse properties file")))))
 
-(defn try-it
+(defmacro try-it
   "Tries to evaluate a function and returns the result or an exception"
   [fun]
-  (try
-    (fun)
-    (catch Exception e e)))
+  (let [e (gensym 'e)]
+    `(try
+       ~fun
+       (catch Exception ~e ~e))))
 
 (defn exception->stack-trace-string
   "Converts an exception into a stack trace string"
   [e]
   (with-out-str (clojure.stacktrace/print-stack-trace e)))
+
+(defn load-file
+  "Loads an image from a file"
+  [file]
+  (try-it (io/input-stream file)))
