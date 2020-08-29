@@ -32,7 +32,8 @@
 
 (def app
   (do
-    (event-handler {:event/type ::events/initialize})
+    (event-handler {:event/type ::events/initialize
+                    :fx/sync true})
     (fx/create-app *state
                    :event-handler event-handler
                    :desc-fn views/desc)))
