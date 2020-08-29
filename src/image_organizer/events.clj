@@ -12,9 +12,12 @@
                  (assoc :exception ~maybe-exception))}
      (do ~@body)))
 
-(defmulti event-handler :event/type)
+(defmulti event-handler
+  "Defines event handler methods for the application"
+  :event/type)
 
-(defmethod event-handler :default [event]
+(defmethod event-handler :default
+  [event]
   (prn event))
 
 (defmethod event-handler ::initialize
@@ -67,13 +70,15 @@
                 loaded-image (util/stream next-image-file)]
             (with-exception-handling
               loaded-image state
-              {:state (-> state
-                          (update :image-files rest)
-                          (assoc :loaded-image loaded-image)
-                          (update :undo-history #(conj % {:event-type :organize
-                                                          :name image-name
-                                                          :from input-folder
-                                                          :to destination-folder})))})))))))
+              {:state
+               (-> state
+                   (update :image-files rest)
+                   (assoc :loaded-image loaded-image)
+                   (update :undo-history
+                           #(conj % {:event-type :organize
+                                     :name image-name
+                                     :from input-folder
+                                     :to destination-folder})))})))))))
 
 (defmethod event-handler ::skip
   [{:keys [state]}]
@@ -85,11 +90,13 @@
             loaded-image (util/stream next-image-file)]
         (with-exception-handling
           loaded-image state
-          {:state (-> state
-                      (update :image-files rest)
-                      (assoc :loaded-image loaded-image)
-                      (update :undo-history #(conj % {:event-type :skip
-                                                      :image-file image-file})))})))))
+          {:state
+           (-> state
+               (update :image-files rest)
+               (assoc :loaded-image loaded-image)
+               (update :undo-history
+                       #(conj % {:event-type :skip
+                                 :image-file image-file})))})))))
 
 (defmethod event-handler ::undo
   [{:keys [state]}]
@@ -124,3 +131,11 @@
                           (update :image-files #(into [previous-image-file] %))
                           (assoc :loaded-image loaded-image)
                           (update :undo-history pop))})))))))
+
+(defmethod event-handler ::stop
+  [{:keys [state]}]
+  (if (:is-repl? state)
+    {:state state}
+    (do
+      (shutdown-agents)
+      (javafx.application.Platform/exit))))

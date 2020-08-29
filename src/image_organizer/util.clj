@@ -1,9 +1,9 @@
 (ns image-organizer.util
-  (:require [clojure.spec.alpha :as s]
+  (:require [clojure.java.io :as io]
+            [clojure.spec.alpha :as s]
+            [clojure.stacktrace :as cs]
             [clojure.string :as string]
-            [me.raynes.fs :as fs]
-            [clojure.java.io :as io]
-            [clojure.stacktrace :as cs]))
+            [me.raynes.fs :as fs]))
 
 (def supported-extensions ["png" "jpg" "jpeg"])
 
