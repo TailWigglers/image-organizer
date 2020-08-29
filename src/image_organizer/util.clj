@@ -79,4 +79,6 @@
 (defn load-file
   "Loads an image from a file"
   [file]
-  (try-it (io/input-stream file)))
+  (if (nil? file)
+    nil
+    (try-it (io/input-stream file))))
