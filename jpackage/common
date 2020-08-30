@@ -1,6 +1,7 @@
 --input dist
 --main-jar image-organizer.jar
---name "image-organizer"
+--name "Image Organizer"
 --main-class clojure.main
 --arguments -m
 --arguments image-organizer.core
+--resource-dir resources
