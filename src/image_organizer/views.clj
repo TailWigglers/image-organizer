@@ -62,7 +62,8 @@
                        :folder-key :output-folder}}
           {:fx/type :button
            :pref-width 150
-           :text "Select Categories"}]}
+           :text "Select Categories"
+           :on-action {:event/type ::events/open-select-categories}}]}
         {:fx/type :border-pane
          :v-box/vgrow :always
          :center
@@ -143,9 +144,47 @@
          :grid-pane/column 0
          :grid-pane/row 1}]}}}))
 
+(defn select-categories
+  [{:keys [categories]}]
+  {:fx/type :dialog
+   :showing true
+   :title "Select Categories"
+   :resizable false
+   :on-close-request {:event/type ::events/close-select-categories}
+   :dialog-pane
+   {:fx/type :dialog-pane
+    :button-types [:ok]
+    :content
+    {:fx/type :v-box
+     :pref-width 300
+     :pref-height 400
+     :children
+     [{:fx/type :scroll-pane
+       :v-box/vgrow :always
+       :fit-to-width true
+       :content
+       {:fx/type :v-box
+        :children
+        (map
+         (fn [category]
+           {:fx/type :h-box
+            :spacing 5
+            :padding 5
+            :alignment :center-left
+            :children
+            [{:fx/type :button
+              :text "Remove"}
+             {:fx/type :label
+              :text category}]})
+         categories)}}
+      {:fx/type :text-field
+       :v-box/margin 5
+       :prompt-text "Add category and press ENTER"}]}}})
+
 (defn desc
   "Chooses which description to create"
-  [{:keys [error?] :as state}]
-  (if error?
-    (alert state)
-    (root state)))
+  [{:keys [scene] :as state}]
+  (case scene
+    :root (root state)
+    :select-categories (select-categories state)
+    :alert (alert state)))

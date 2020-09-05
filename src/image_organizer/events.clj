@@ -11,7 +11,7 @@
   [maybe-exception state & body]
   `(if (instance? Exception ~maybe-exception)
      {:state (-> ~state
-                 (assoc :error? true)
+                 (assoc :scene :alert)
                  (assoc :exception ~maybe-exception))}
      (do ~@body)))
 
@@ -167,6 +167,20 @@
             (when (not-empty categories)
               (util/create-subfolders folder-path categories))
             {:state (assoc state folder-key folder-path)}))))))
+
+(defmethod event-handler ::open-select-categories
+  [{:keys [state]}]
+  {:state (assoc state :scene :select-categories)})
+
+(defmethod event-handler ::close-select-categories
+  [{:keys [state]}]
+  (let [image-file (first (:image-files state))
+        loaded-image (util/stream image-file)]
+    (with-exception-handling
+      loaded-image state
+      {:state (-> state
+                  (assoc :scene :root)
+                  (assoc :loaded-image loaded-image))})))
 
 (defmethod event-handler ::stop
   [{:keys [state]}]
