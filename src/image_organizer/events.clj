@@ -47,7 +47,8 @@
 (defmethod event-handler ::scene-height
   [{scene-height :fx/event state :state}]
   (let [button-height (:button-height state)
-        image-view-height (- scene-height button-height)]
+        menu-bar-height (:menu-bar-height state)
+        image-view-height (- scene-height button-height menu-bar-height)]
     {:state (assoc state :image-view-height image-view-height)}))
 
 (defmethod event-handler ::organize

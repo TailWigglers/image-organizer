@@ -24,56 +24,66 @@
            button-height
            image-view-width
            image-view-height
-           loaded-image]}]
+           loaded-image
+           menu-bar-height]}]
   (let [finished? (empty? image-files)]
     {:fx/type :stage
      :showing true
      :title "Image Organizer"
+     :min-width 1280
+     :min-height 720
      :on-close-request {:event/type ::events/stop}
      :scene
      {:fx/type :scene
-      :min-width 1280
-      :min-height 720
       :on-width-changed {:event/type ::events/scene-width}
       :on-height-changed {:event/type ::events/scene-height}
       :root
-      {:fx/type :border-pane
-       :center
-       (if finished?
-         {:fx/type :label
-          :text "No images left to organize!"}
-         (image-view image-files
-                     image-view-width
-                     image-view-height
-                     loaded-image))
-       :bottom
-       {:fx/type :h-box
-        :children
-        (concat
-         (map (fn [sf]
-                {:fx/type :button
-                 :text sf
-                 :h-box/hgrow :always
-                 :max-width java.lang.Double/MAX_VALUE
-                 :pref-height button-height
-                 :disable finished?
-                 :on-action {:event/type ::events/organize
-                             :sf sf}})
-              categories)
-         [{:fx/type :button
-           :text "Skip"
-           :h-box/hgrow :always
-           :max-width java.lang.Double/MAX_VALUE
-           :pref-height button-height
-           :disable finished?
-           :on-action {:event/type ::events/skip}}
-          {:fx/type :button
-           :text "Undo"
-           :h-box/hgrow :always
-           :max-width java.lang.Double/MAX_VALUE
-           :pref-height button-height
-           :disable (empty? undo-history)
-           :on-action {:event/type ::events/undo}}])}}}}))
+      {:fx/type :v-box
+       :children
+       [{:fx/type :menu-bar
+         :pref-height menu-bar-height
+         :menus
+         [{:fx/type :menu
+           :text "File"
+           }]}
+        {:fx/type :border-pane
+         :v-box/vgrow :always
+         :center
+         (if finished?
+           {:fx/type :label
+            :text "No images left to organize!"}
+           (image-view image-files
+                       image-view-width
+                       image-view-height
+                       loaded-image))
+         :bottom
+         {:fx/type :h-box
+          :children
+          (concat
+           (map (fn [sf]
+                  {:fx/type :button
+                   :text sf
+                   :h-box/hgrow :always
+                   :max-width java.lang.Double/MAX_VALUE
+                   :pref-height button-height
+                   :disable finished?
+                   :on-action {:event/type ::events/organize
+                               :sf sf}})
+                categories)
+           [{:fx/type :button
+             :text "Skip"
+             :h-box/hgrow :always
+             :max-width java.lang.Double/MAX_VALUE
+             :pref-height button-height
+             :disable finished?
+             :on-action {:event/type ::events/skip}}
+            {:fx/type :button
+             :text "Undo"
+             :h-box/hgrow :always
+             :max-width java.lang.Double/MAX_VALUE
+             :pref-height button-height
+             :disable (empty? undo-history)
+             :on-action {:event/type ::events/undo}}])}}]}}}))
 
 (defn alert
   "Creates description for an exception dialog"

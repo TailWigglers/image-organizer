@@ -13,8 +13,9 @@
     :image-files []
     :undo-history []
     :button-height 40
+    :menu-bar-height 30
     :image-view-width 1280
-    :image-view-height 680
+    :image-view-height (- 720 40 30)
     :loaded-image nil
     :error? false
     :exception nil
