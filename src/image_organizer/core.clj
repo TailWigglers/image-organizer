@@ -8,14 +8,14 @@
   "State of the application and its default values"
   (atom
    {:categories []
-    :input-folder ""
-    :output-folder ""
+    :input-folder nil
+    :output-folder nil
     :image-files []
     :undo-history []
     :button-height 40
-    :menu-bar-height 30
+    :toolbar-height 40
     :image-view-width 1280
-    :image-view-height (- 720 40 30)
+    :image-view-height (- 720 40 40 20)
     :loaded-image nil
     :error? false
     :exception nil

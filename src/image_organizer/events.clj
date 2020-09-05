@@ -1,7 +1,10 @@
 (ns image-organizer.events
   (:require [cljfx.api :as fx]
             [image-organizer.util :as util :refer [try-it]]
-            [me.raynes.fs :as fs]))
+            [me.raynes.fs :as fs])
+  (:import [javafx.stage DirectoryChooser]
+           [javafx.event ActionEvent]
+           [javafx.scene Node]))
 
 (defmacro with-exception-handling
   "Handles possible exceptions when updating state"
@@ -11,6 +14,13 @@
                  (assoc :error? true)
                  (assoc :exception ~maybe-exception))}
      (do ~@body)))
+
+(defn directory-chooser
+  "Opens a directory chooser over the specified window"
+  [window]
+  (let [chooser (doto (DirectoryChooser.)
+                  (.setTitle "Select Folder"))]
+    @(fx/on-fx-thread (.showDialog chooser window))))
 
 (defmulti event-handler
   "Defines event handler methods for the application"
@@ -47,8 +57,8 @@
 (defmethod event-handler ::scene-height
   [{scene-height :fx/event state :state}]
   (let [button-height (:button-height state)
-        menu-bar-height (:menu-bar-height state)
-        image-view-height (- scene-height button-height menu-bar-height)]
+        toolbar-height (:toolbar-height state)
+        image-view-height (- scene-height button-height toolbar-height)]
     {:state (assoc state :image-view-height image-view-height)}))
 
 (defmethod event-handler ::organize
@@ -130,6 +140,33 @@
                           (update :image-files #(into [previous-image-file] %))
                           (assoc :loaded-image loaded-image)
                           (update :undo-history pop))})))))))
+
+(defmethod event-handler ::select-folder
+  [{:keys [state
+           folder-key
+           ^ActionEvent fx/event]}]
+  (let [window (->> event
+                    (.getTarget)
+                    (cast Node)
+                    (.getScene)
+                    (.getWindow))]
+    (when-let [folder-file (directory-chooser window)]
+      (let [folder-path (.getAbsolutePath folder-file)]
+        (case folder-key
+          :input-folder
+          (let [image-files (util/load-image-files folder-path)
+                loaded-image (util/stream (first image-files))]
+            (with-exception-handling
+              loaded-image state
+              {:state (-> state
+                          (assoc folder-key folder-path)
+                          (assoc :image-files image-files)
+                          (assoc :loaded-image loaded-image))}))
+          :output-folder
+          (let [categories (:categories state)]
+            (when (not-empty categories)
+              (util/create-subfolders folder-path categories))
+            {:state (assoc state folder-key folder-path)}))))))
 
 (defmethod event-handler ::stop
   [{:keys [state]}]

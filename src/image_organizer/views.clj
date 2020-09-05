@@ -25,8 +25,15 @@
            image-view-width
            image-view-height
            loaded-image
-           menu-bar-height]}]
-  (let [finished? (empty? image-files)]
+           toolbar-height
+           input-folder
+           output-folder]}]
+  (let [finished? (empty? image-files)
+        input-folder? (nil? input-folder)
+        output-folder? (nil? output-folder)
+        buttons-disabled? (or finished?
+                              input-folder?
+                              output-folder?)]
     {:fx/type :stage
      :showing true
      :title "Image Organizer"
@@ -40,22 +47,38 @@
       :root
       {:fx/type :v-box
        :children
-       [{:fx/type :menu-bar
-         :pref-height menu-bar-height
-         :menus
-         [{:fx/type :menu
-           :text "File"
-           }]}
+       [{:fx/type :tool-bar
+         :pref-height toolbar-height
+         :items
+         [{:fx/type :button
+           :text "Select Input Folder"
+           :pref-width 150
+           :on-action {:event/type ::events/select-folder
+                       :folder-key :input-folder}}
+          {:fx/type :button
+           :text "Select Ouput Folder"
+           :pref-width 150
+           :on-action {:event/type ::events/select-folder
+                       :folder-key :output-folder}}
+          {:fx/type :button
+           :pref-width 150
+           :text "Select Categories"}]}
         {:fx/type :border-pane
          :v-box/vgrow :always
          :center
-         (if finished?
+         (if input-folder?
            {:fx/type :label
-            :text "No images left to organize!"}
-           (image-view image-files
-                       image-view-width
-                       image-view-height
-                       loaded-image))
+            :text "Input folder not selected!"}
+           (if output-folder?
+             {:fx/type :label
+              :text "Output folder not selected!"}
+             (if finished?
+               {:fx/type :label
+                :text "No images left to organize!"}
+               (image-view image-files
+                           image-view-width
+                           image-view-height
+                           loaded-image))))
          :bottom
          {:fx/type :h-box
           :children
@@ -66,7 +89,7 @@
                    :h-box/hgrow :always
                    :max-width java.lang.Double/MAX_VALUE
                    :pref-height button-height
-                   :disable finished?
+                   :disable buttons-disabled?
                    :on-action {:event/type ::events/organize
                                :sf sf}})
                 categories)
@@ -75,7 +98,7 @@
              :h-box/hgrow :always
              :max-width java.lang.Double/MAX_VALUE
              :pref-height button-height
-             :disable finished?
+             :disable buttons-disabled?
              :on-action {:event/type ::events/skip}}
             {:fx/type :button
              :text "Undo"
