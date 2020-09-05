@@ -29,11 +29,11 @@
     {:fx/type :stage
      :showing true
      :title "Image Organizer"
-     :min-width 1280
-     :min-height 720
      :on-close-request {:event/type ::events/stop}
      :scene
      {:fx/type :scene
+      :min-width 1280
+      :min-height 720
       :on-width-changed {:event/type ::events/scene-width}
       :on-height-changed {:event/type ::events/scene-height}
       :root
