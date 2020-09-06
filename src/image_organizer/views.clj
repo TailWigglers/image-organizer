@@ -179,7 +179,8 @@
          categories)}}
       {:fx/type :text-field
        :v-box/margin 5
-       :prompt-text "Add category and press ENTER"}]}}})
+       :prompt-text "Category"
+       :on-text-changed {:event/type ::events/type-text}}]}}})
 
 (defn desc
   "Chooses which description to create"

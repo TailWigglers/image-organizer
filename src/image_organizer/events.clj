@@ -182,6 +182,10 @@
                   (assoc :scene :root)
                   (assoc :loaded-image loaded-image))})))
 
+(defmethod event-handler ::type-text
+  [{:keys [state fx/event]}]
+  {:state (assoc state :typed-text event)})
+
 (defmethod event-handler ::stop
   [{:keys [state]}]
   (if (:is-repl? state)

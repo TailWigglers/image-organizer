@@ -17,6 +17,7 @@
     :image-view-width 1280
     :image-view-height (- 720 40 40 20)
     :loaded-image nil
+    :typed-text nil
     :scene :root
     :exception nil
     :is-repl? true}))
