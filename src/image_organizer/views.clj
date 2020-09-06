@@ -2,7 +2,8 @@
   (:require [cljfx.api :as fx]
             [clojure.java.io :as io]
             [image-organizer.events :as events]
-            [image-organizer.util :as util]))
+            [image-organizer.util :as util])
+  (:import [javafx.geometry Insets]))
 
 (defn image-view
   "Creates description of the image view"
@@ -31,9 +32,11 @@
   (let [finished? (empty? image-files)
         input-folder? (nil? input-folder)
         output-folder? (nil? output-folder)
+        categories? (empty? categories)
         buttons-disabled? (or finished?
                               input-folder?
-                              output-folder?)]
+                              output-folder?
+                              categories?)]
     {:fx/type :stage
      :showing true
      :title "Image Organizer"
@@ -73,13 +76,16 @@
            (if output-folder?
              {:fx/type :label
               :text "Output folder not selected!"}
-             (if finished?
+             (if categories?
                {:fx/type :label
-                :text "No images left to organize!"}
-               (image-view image-files
-                           image-view-width
-                           image-view-height
-                           loaded-image))))
+                :text "No categories created!"}
+               (if finished?
+                 {:fx/type :label
+                  :text "No images left to organize!"}
+                 (image-view image-files
+                             image-view-width
+                             image-view-height
+                             loaded-image)))))
          :bottom
          {:fx/type :h-box
           :children
@@ -144,43 +150,69 @@
          :grid-pane/column 0
          :grid-pane/row 1}]}}}))
 
+(defn category-text-filter
+  "Filters out invalid filename characters and limits the input length"
+  [change]
+  (let [new-text (.getControlNewText change)]
+    (when (or (> (count new-text) 25)
+              (some util/invalid-symbol? new-text))
+      (.setText change ""))
+    change))
+
 (defn select-categories
-  [{:keys [categories]}]
-  {:fx/type :dialog
-   :showing true
-   :title "Select Categories"
-   :resizable false
-   :on-close-request {:event/type ::events/close-select-categories}
-   :dialog-pane
-   {:fx/type :dialog-pane
-    :button-types [:ok]
-    :content
-    {:fx/type :v-box
-     :pref-width 300
-     :pref-height 400
-     :children
-     [{:fx/type :scroll-pane
-       :v-box/vgrow :always
-       :fit-to-width true
-       :content
-       {:fx/type :v-box
-        :children
-        (map
-         (fn [category]
-           {:fx/type :h-box
-            :spacing 5
-            :padding 5
-            :alignment :center-left
-            :children
-            [{:fx/type :button
-              :text "Remove"}
-             {:fx/type :label
-              :text category}]})
-         categories)}}
-      {:fx/type :text-field
-       :v-box/margin 5
-       :prompt-text "Category"
-       :on-text-changed {:event/type ::events/type-text}}]}}})
+  "Creates a dialog for selecting categories"
+  [{:keys [categories
+           typed-text]}]
+  (let [valid-category? (util/valid-category? typed-text
+                                              categories)]
+    {:fx/type :dialog
+     :showing true
+     :title "Select Categories"
+     :resizable false
+     :on-close-request {:event/type ::events/close-select-categories}
+     :dialog-pane
+     {:fx/type :dialog-pane
+      :button-types [:ok]
+      :content
+      {:fx/type :v-box
+       :pref-width 300
+       :pref-height 400
+       :children
+       [{:fx/type :scroll-pane
+         :v-box/vgrow :always
+         :fit-to-width true
+         :content
+         {:fx/type :v-box
+          :children
+          (map
+           (fn [category]
+             {:fx/type :h-box
+              :spacing 5
+              :padding 5
+              :alignment :center-left
+              :children
+              [{:fx/type :button
+                :text "Remove"
+                :on-action {:event/type ::events/remove-category
+                            :category category}}
+               {:fx/type :label
+                :text category}]})
+           categories)}}
+        {:fx/type :h-box
+         :children
+         [{:fx/type :text-field
+           :text typed-text
+           :h-box/margin (Insets. 5 5 0 0)
+           :h-box/hgrow :always
+           :text-formatter {:fx/type :text-formatter
+                            :filter category-text-filter}
+           :prompt-text "Category"
+           :on-text-changed {:event/type ::events/type-text}}
+          {:fx/type :button
+           :text "Add"
+           :h-box/margin (Insets. 5 0 5 0)
+           :disable (not valid-category?)
+           :on-action {:event/type ::events/add-category}}]}]}}}))
 
 (defn desc
   "Chooses which description to create"

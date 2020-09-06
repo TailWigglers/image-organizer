@@ -6,6 +6,8 @@
             [me.raynes.fs :as fs]))
 
 (def supported-extensions ["png" "jpg" "jpeg"])
+(def app-dir (str (System/getProperty "user.home") "/.image-organizer"))
+(def properties-file "properties.edn")
 
 (s/def
   ::categories
@@ -65,13 +67,19 @@
   "Reads the properties file. This will either return a map containing
    the data of the properties file or an exception if there was an error"
   []
-  (let [home-dir (System/getProperty "user.home")
-        properties (try-it (read-string (slurp (str home-dir "/properties.edn"))))]
+  (let [properties (try-it (read-string (slurp (str app-dir "/" properties-file))))]
     (if (instance? Exception properties)
       properties
       (if (s/valid? ::properties properties)
         properties
         (Exception. "Could not parse properties file")))))
+
+(defn write-properties
+  "Writes the properties file."
+  [properties]
+  (let [properties-path (str app-dir "/" properties-file)]
+    (fs/mkdir app-dir)
+    (try-it (spit properties-path (pr-str properties)))))
 
 (defn exception->stack-trace-string
   "Converts an exception into a stack trace string"
@@ -84,3 +92,20 @@
   (if (nil? file)
     nil
     (try-it (io/input-stream file))))
+
+(defn valid-category?
+  "Makes sure the category is valid"
+  [typed-text categories]
+  (and (not-any? #(= (string/lower-case typed-text)
+                     (string/lower-case %))
+                 categories)
+       (not (= "" typed-text))))
+
+(def invalid-symbols
+  [":" "\\" "/" "." "," "[" "]" "{" "}" "(" ")" "!" ";" "\"" "'" "*" "?" "<" ">" "|"])
+
+(defn invalid-symbol?
+  "Checks if a character is an invalid symbol"
+  [character]
+  (let [symbol (str character)]
+    (some #(= % symbol) invalid-symbols)))

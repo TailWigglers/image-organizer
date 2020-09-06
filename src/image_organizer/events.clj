@@ -33,8 +33,8 @@
 (defmethod event-handler ::initialize
   [{:keys [state]}]
   (let [properties (util/read-properties)]
-    (with-exception-handling
-      properties state
+    (if (instance? Exception properties)
+      {:state state}
       (let [{:keys [categories
                     input-folder
                     output-folder]} properties
@@ -180,14 +180,32 @@
       loaded-image state
       {:state (-> state
                   (assoc :scene :root)
-                  (assoc :loaded-image loaded-image))})))
+                  (assoc :loaded-image loaded-image)
+                  (assoc :typed-text ""))})))
 
 (defmethod event-handler ::type-text
   [{:keys [state fx/event]}]
   {:state (assoc state :typed-text event)})
 
+(defmethod event-handler ::add-category
+  [{:keys [state fx/event]}]
+  (let [typed-text (:typed-text state)
+        output-folder (:output-folder state)
+        categories (:categories state)
+        new-categories (conj categories typed-text)]
+    (when (some? output-folder)
+      (util/create-subfolders output-folder new-categories))
+    {:state (-> state
+                (assoc :categories new-categories)
+                (assoc :typed-text ""))}))
+
+(defmethod event-handler ::remove-category
+  [{:keys [state category]}]
+  {:state (update state :categories #(vec (remove (partial = category) %)))})
+
 (defmethod event-handler ::stop
   [{:keys [state]}]
+  (util/write-properties (select-keys state [:categories :input-folder :output-folder]))
   (if (:is-repl? state)
     {:state state}
     (do
