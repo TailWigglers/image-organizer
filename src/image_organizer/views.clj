@@ -19,7 +19,8 @@
 
 (defn root
   "Creates description of the application"
-  [{:keys [categories
+  [{:keys [app-name
+           categories
            image-files
            undo-history
            button-height
@@ -39,7 +40,7 @@
                               categories?)]
     {:fx/type :stage
      :showing true
-     :title "Image Organizer"
+     :title app-name
      :min-width 1280
      :min-height 720
      :on-close-request {:event/type ::events/stop}
@@ -66,7 +67,11 @@
           {:fx/type :button
            :pref-width 150
            :text "Select Categories"
-           :on-action {:event/type ::events/open-select-categories}}]}
+           :on-action {:event/type ::events/open-select-categories}}
+          {:fx/type :button
+           :pref-width 150
+           :text "About"
+           :on-action {:event/type ::events/open-about}}]}
         {:fx/type :border-pane
          :v-box/vgrow :always
          :center
@@ -214,10 +219,44 @@
            :disable (not valid-category?)
            :on-action {:event/type ::events/add-category}}]}]}}}))
 
+(defn about
+  "Creates description for about dialog"
+  [{:keys [logo-image version app-name]}]
+  {:fx/type :dialog
+   :showing true
+   :title "About"
+   :on-close-request {:event/type ::events/close-about}
+   :dialog-pane
+   {:fx/type :dialog-pane
+    :button-types [:ok]
+    :content
+    {:fx/type :h-box
+     :padding 20
+     :children
+     [{:fx/type :image-view
+       :image {:fx/type :image
+               :is logo-image}
+       :x 0
+       :y 0
+       :fit-width 200
+       :fit-height 200
+       :preserve-ratio true}
+      {:fx/type :v-box
+       :alignment :center-left
+       :padding 20
+       :children
+       [{:fx/type :label
+         :text app-name}
+        {:fx/type :label
+         :text (str "Version " version)}
+        {:fx/type :label
+         :text "© Tail Wigglers"}]}]}}})
+
 (defn desc
   "Chooses which description to create"
   [{:keys [scene] :as state}]
   (case scene
     :root (root state)
     :select-categories (select-categories state)
-    :alert (alert state)))
+    :alert (alert state)
+    :about (about state)))

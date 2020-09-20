@@ -109,3 +109,7 @@
   [character]
   (let [symbol (str character)]
     (some #(= % symbol) invalid-symbols)))
+
+(defn load-logo-image
+  []
+  (try-it (io/input-stream (io/resource "Image Organizer.png"))))

@@ -1,5 +1,6 @@
 (ns image-organizer.events
   (:require [cljfx.api :as fx]
+            [clojure.java.io :as io]
             [image-organizer.util :as util :refer [try-it]]
             [me.raynes.fs :as fs])
   (:import [javafx.stage DirectoryChooser]
@@ -202,6 +203,25 @@
 (defmethod event-handler ::remove-category
   [{:keys [state category]}]
   {:state (update state :categories #(vec (remove (partial = category) %)))})
+
+(defmethod event-handler ::open-about
+  [{:keys [state]}]
+  (let [logo-image (util/load-logo-image)]
+    (with-exception-handling
+      logo-image state
+      {:state (-> state
+                  (assoc :scene :about)
+                  (assoc :logo-image logo-image))})))
+
+(defmethod event-handler ::close-about
+  [{:keys [state]}]
+  (let [image-file (first (:image-files state))
+        loaded-image (util/stream image-file)]
+    (with-exception-handling
+      loaded-image state
+      {:state (-> state
+                  (assoc :scene :root)
+                  (assoc :loaded-image loaded-image))})))
 
 (defmethod event-handler ::stop
   [{:keys [state]}]

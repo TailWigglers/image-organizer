@@ -20,7 +20,10 @@
     :typed-text ""
     :scene :root
     :exception nil
-    :is-repl? true}))
+    :is-repl? true
+    :logo-image nil
+    :version "1.00"
+    :app-name "Image Organizer"}))
 
 (def event-handler
   "Application event handler"
