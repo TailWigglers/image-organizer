@@ -87,10 +87,13 @@
                (if finished?
                  {:fx/type :label
                   :text "No images left to organize!"}
-                 (image-view image-files
-                             image-view-width
-                             image-view-height
-                             loaded-image)))))
+                 (if (nil? loaded-image)
+                   {:fx/type :label
+                    :text "Loading..."}
+                   (image-view image-files
+                               image-view-width
+                               image-view-height
+                               loaded-image))))))
          :bottom
          {:fx/type :h-box
           :children
@@ -122,11 +125,15 @@
 
 (defn alert
   "Creates description for an exception dialog"
-  [{:keys [exception]}]
-  (let [error-message (.getMessage exception)
-        stack-trace (util/exception->stack-trace-string exception)]
+  [{:keys [exception scene]}]
+  (let [error-message (if (nil? exception)
+                        ""
+                        (.getMessage exception))
+        stack-trace (if (nil? exception)
+                      ""
+                      (util/exception->stack-trace-string exception))]
     {:fx/type :dialog
-     :showing true
+     :showing (= :alert scene)
      :title "Error"
      :resizable true
      :on-close-request {:event/type ::events/stop}
@@ -167,11 +174,12 @@
 (defn select-categories
   "Creates a dialog for selecting categories"
   [{:keys [categories
-           typed-text]}]
+           typed-text
+           scene]}]
   (let [valid-category? (util/valid-category? typed-text
                                               categories)]
     {:fx/type :dialog
-     :showing true
+     :showing (= :select-categories scene)
      :title "Select Categories"
      :resizable false
      :on-close-request {:event/type ::events/close-select-categories}
@@ -221,9 +229,9 @@
 
 (defn about
   "Creates description for about dialog"
-  [{:keys [logo-image version app-name]}]
+  [{:keys [logo-image version app-name scene]}]
   {:fx/type :dialog
-   :showing true
+   :showing (= :about scene)
    :title "About"
    :on-close-request {:event/type ::events/close-about}
    :dialog-pane
@@ -233,14 +241,17 @@
     {:fx/type :h-box
      :padding 20
      :children
-     [{:fx/type :image-view
-       :image {:fx/type :image
-               :is logo-image}
-       :x 0
-       :y 0
-       :fit-width 200
-       :fit-height 200
-       :preserve-ratio true}
+     [(if (nil? logo-image)
+        {:fx/type :label
+         :text "Loading..."}
+        {:fx/type :image-view
+         :image {:fx/type :image
+                 :is logo-image}
+         :x 0
+         :y 0
+         :fit-width 200
+         :fit-height 200
+         :preserve-ratio true})
       {:fx/type :v-box
        :alignment :center-left
        :padding 20
@@ -254,9 +265,9 @@
 
 (defn desc
   "Chooses which description to create"
-  [{:keys [scene] :as state}]
-  (case scene
-    :root (root state)
-    :select-categories (select-categories state)
-    :alert (alert state)
-    :about (about state)))
+  [state]
+  {:fx/type fx/ext-many
+   :desc [(root state)
+          (select-categories state)
+          (alert state)
+          (about state)]})

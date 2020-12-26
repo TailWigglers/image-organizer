@@ -31,14 +31,12 @@
       (fx/wrap-co-effects
        {:state (fx/make-deref-co-effect *state)})
       (fx/wrap-effects
-       {:state (fx/make-reset-effect *state)})
-      (fx/wrap-async)))
+       {:state (fx/make-reset-effect *state)})))
 
 (def app
   "Initializes the data state and creates the application"
   (do
-    (event-handler {:event/type ::events/initialize
-                    :fx/sync true})
+    (event-handler {:event/type ::events/initialize})
     (fx/create-app *state
                    :event-handler event-handler
                    :desc-fn views/desc)))
