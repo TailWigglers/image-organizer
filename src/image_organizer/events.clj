@@ -23,6 +23,15 @@
                   (.setTitle "Select Folder"))]
     @(fx/on-fx-thread (.showDialog chooser window))))
 
+(defn get-window
+  "Gets the window from an event's target"
+  [event]
+  (->> event
+       (.getTarget)
+       (cast Node)
+       (.getScene)
+       (.getWindow)))
+
 (defmulti event-handler
   "Defines event handler methods for the application"
   :event/type)
@@ -146,11 +155,7 @@
   [{:keys [state
            folder-key
            ^ActionEvent fx/event]}]
-  (let [window (->> event
-                    (.getTarget)
-                    (cast Node)
-                    (.getScene)
-                    (.getWindow))]
+  (let [window (get-window event)]
     (when-let [folder-file (directory-chooser window)]
       (let [folder-path (.getAbsolutePath folder-file)]
         (case folder-key
