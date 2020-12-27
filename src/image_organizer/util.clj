@@ -5,7 +5,7 @@
             [clojure.string :as string]
             [me.raynes.fs :as fs]))
 
-(def supported-extensions ["png" "jpg" "jpeg"])
+(def supported-extensions ["png" "jpg" "jpeg" "bmp" "gif"])
 (def app-dir (str (System/getProperty "user.home") "/.image-organizer"))
 (def properties-file "properties.edn")
 
