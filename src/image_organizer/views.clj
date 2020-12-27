@@ -1,6 +1,5 @@
 (ns image-organizer.views
   (:require [cljfx.api :as fx]
-            [clojure.java.io :as io]
             [cljfx.css :as css]
             [image-organizer.events :as events]
             [image-organizer.util :as util]

@@ -193,7 +193,7 @@
   {:state (assoc state :typed-text event)})
 
 (defmethod event-handler ::add-category
-  [{:keys [state fx/event]}]
+  [{:keys [state]}]
   (let [typed-text (:typed-text state)
         output-folder (:output-folder state)
         categories (:categories state)
