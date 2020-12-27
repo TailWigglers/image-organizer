@@ -23,7 +23,7 @@
 
 (defn image-view
   "Creates description of the image view"
-  [image-files width height loaded-image]
+  [width height loaded-image]
   {:fx/type :image-view
    :style-class "border-pane"
    :image {:fx/type :image
@@ -114,8 +114,7 @@
                  (if (nil? loaded-image)
                    {:fx/type :label
                     :text "Loading..."}
-                   (image-view image-files
-                               image-view-width
+                   (image-view image-view-width
                                image-view-height
                                loaded-image))))))
          :bottom

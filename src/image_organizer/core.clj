@@ -46,3 +46,4 @@
    is closed, JavaFX is shutdown and shutdown-agents is called"
   []
   (swap! *state assoc :is-repl? false))
+

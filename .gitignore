@@ -11,6 +11,7 @@ pom.xml.asc
 /.prepl-port
 .hgignore
 .hg/
-.DS_Store
+*.DS_Store
 /.cpcache
 *.dmg
+/.clj-kondo/.cache
