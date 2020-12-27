@@ -133,6 +133,8 @@
                       ""
                       (util/exception->stack-trace-string exception))]
     {:fx/type :dialog
+     :owner {:fx/type fx/ext-get-ref
+             :ref ::main-stage}
      :showing (= :alert scene)
      :title "Error"
      :resizable true
@@ -179,6 +181,8 @@
   (let [valid-category? (util/valid-category? typed-text
                                               categories)]
     {:fx/type :dialog
+     :owner {:fx/type fx/ext-get-ref
+             :ref ::main-stage}
      :showing (= :select-categories scene)
      :title "Select Categories"
      :resizable false
@@ -231,6 +235,8 @@
   "Creates description for about dialog"
   [{:keys [logo-image version app-name scene]}]
   {:fx/type :dialog
+   :owner {:fx/type fx/ext-get-ref
+           :ref ::main-stage}
    :showing (= :about scene)
    :title "About"
    :on-close-request {:event/type ::events/close-about}
@@ -266,8 +272,11 @@
 (defn desc
   "Chooses which description to create"
   [state]
-  {:fx/type fx/ext-many
-   :desc [(root state)
-          (select-categories state)
-          (alert state)
-          (about state)]})
+  {:fx/type fx/ext-let-refs
+   :refs {::main-stage (root state)}
+   :desc {:fx/type fx/ext-let-refs
+          :refs {::select-categories-dialog (select-categories state)
+                 ::about-dialog (about state)
+                 ::alert-dialog (alert state)}
+          :desc {:fx/type fx/ext-get-ref
+                 :ref ::main-stage}}})
