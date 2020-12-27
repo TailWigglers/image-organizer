@@ -209,6 +209,24 @@
   [{:keys [state category]}]
   {:state (update state :categories #(vec (remove (partial = category) %)))})
 
+(defmethod event-handler ::move-category
+  [{:keys [state index direction]}]
+  {:state (update state :categories #(move-item % index direction))})
+
+(defn remove-index [v index]
+  (vec (concat (subvec v 0 index) (subvec v (inc index)))))
+
+(defn append-at-index [v index value]
+  (vec (concat (subvec v 0 index) [value] (subvec v index))))
+
+(defn move-item [v index direction]
+  (let [item (get v index)
+        new-index (if (= direction :up) (dec index) (inc index))]
+    (-> v
+        (remove-index index)
+        (append-at-index new-index item))))
+
+
 (defmethod event-handler ::open-about
   [{:keys [state]}]
   (let [logo-image (util/load-logo-image)]

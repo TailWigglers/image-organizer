@@ -218,7 +218,7 @@
       :button-types [:ok]
       :content
       {:fx/type :v-box
-       :pref-width 300
+       :pref-width 400
        :pref-height 400
        :children
        [{:fx/type :scroll-pane
@@ -230,20 +230,34 @@
          {:fx/type :v-box
           :style-class "vbox"
           :children
-          (map
-           (fn [category]
-             {:fx/type :h-box
-              :spacing 5
-              :padding 5
-              :alignment :center-left
-              :children
-              [{:fx/type :button
-                :text "Remove"
-                :on-action {:event/type ::events/remove-category
-                            :category category}}
-               {:fx/type :label
-                :text category}]})
-           categories)}}
+          (let [last-index (- (count categories) 1)]
+            (map-indexed
+             (fn [index category]
+               {:fx/type :h-box
+                :spacing 5
+                :padding 5
+                :alignment :center-left
+                :children
+                [{:fx/type :button
+                  :text "Remove"
+                  :min-width 80
+                  :on-action {:event/type ::events/remove-category
+                              :category category}}
+                 {:fx/type :button
+                  :text "↑"
+                  :disable (= index 0)
+                  :on-action {:event/type ::events/move-category
+                              :index index
+                              :direction :up}}
+                 {:fx/type :button
+                  :text "↓"
+                  :disable (= index last-index)
+                  :on-action {:event/type ::events/move-category
+                              :index index
+                              :direction :down}}
+                 {:fx/type :label
+                  :text category}]})
+             categories))}}
         {:fx/type :h-box
          :alignment :center
          :children
