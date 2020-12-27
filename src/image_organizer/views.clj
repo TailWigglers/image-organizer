@@ -1,14 +1,32 @@
 (ns image-organizer.views
   (:require [cljfx.api :as fx]
             [clojure.java.io :as io]
+            [cljfx.css :as css]
             [image-organizer.events :as events]
-            [image-organizer.util :as util])
+            [image-organizer.util :as util]
+            [image-organizer.style :refer [style]])
   (:import [javafx.geometry Insets]))
+
+#_(defn button-with-dialog
+    [{:keys [state
+             state-id
+             button
+             dialog]}]
+    {:fx/type fx/ext-let-refs
+     :refs {::dialog (merge {:fx/type :dialog
+                             :showing (get-in state [:internal state-id :showing] false)
+                             :on-hidden {:event/type ::on-dialog-hidden}}
+                            dialog)}
+     :desc (merge {:fx/type :button
+                   :on-action {:event/type ::show-dialog
+                               :state-id state-id}}
+                  button)})
 
 (defn image-view
   "Creates description of the image view"
   [image-files width height loaded-image]
   {:fx/type :image-view
+   :style-class "border-pane"
    :image {:fx/type :image
            :is loaded-image}
    :x 0
@@ -48,31 +66,38 @@
      {:fx/type :scene
       :on-width-changed {:event/type ::events/scene-width}
       :on-height-changed {:event/type ::events/scene-height}
+      :stylesheets [(::css/url style)]
       :root
       {:fx/type :v-box
        :children
        [{:fx/type :tool-bar
+         :style-class "tool-bar"
          :pref-height toolbar-height
          :items
          [{:fx/type :button
            :text "Select Input Folder"
            :pref-width 150
+           :pref-height toolbar-height
            :on-action {:event/type ::events/select-folder
                        :folder-key :input-folder}}
           {:fx/type :button
            :text "Select Ouput Folder"
            :pref-width 150
+           :pref-height toolbar-height
            :on-action {:event/type ::events/select-folder
                        :folder-key :output-folder}}
           {:fx/type :button
            :pref-width 150
+           :pref-height toolbar-height
            :text "Select Categories"
            :on-action {:event/type ::events/open-select-categories}}
           {:fx/type :button
            :pref-width 150
+           :pref-height toolbar-height
            :text "About"
            :on-action {:event/type ::events/open-about}}]}
         {:fx/type :border-pane
+         :style-class "border-pane"
          :v-box/vgrow :always
          :center
          (if input-folder?
@@ -189,6 +214,7 @@
      :on-close-request {:event/type ::events/close-select-categories}
      :dialog-pane
      {:fx/type :dialog-pane
+      :style-class "dialog-pane"
       :button-types [:ok]
       :content
       {:fx/type :v-box
@@ -196,10 +222,13 @@
        :pref-height 400
        :children
        [{:fx/type :scroll-pane
+         :style-class "scroll-pane"
          :v-box/vgrow :always
          :fit-to-width true
+         :fit-to-height true
          :content
          {:fx/type :v-box
+          :style-class "vbox"
           :children
           (map
            (fn [category]
@@ -216,8 +245,10 @@
                 :text category}]})
            categories)}}
         {:fx/type :h-box
+         :alignment :center
          :children
          [{:fx/type :text-field
+           :pref-height 30
            :text typed-text
            :h-box/margin (Insets. 5 5 0 0)
            :h-box/hgrow :always
@@ -226,8 +257,9 @@
            :prompt-text "Category"
            :on-text-changed {:event/type ::events/type-text}}
           {:fx/type :button
+           :pref-height 30
            :text "Add"
-           :h-box/margin (Insets. 5 0 5 0)
+           :h-box/margin (Insets. 5 0 0 0)
            :disable (not valid-category?)
            :on-action {:event/type ::events/add-category}}]}]}}}))
 

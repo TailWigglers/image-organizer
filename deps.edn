@@ -1,6 +1,7 @@
 {:paths ["src" "resources"]
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}
         cljfx {:mvn/version "1.7.6"}
-        clj-commons/fs {:mvn/version "1.5.2"}}
+        clj-commons/fs {:mvn/version "1.5.2"}
+        cljfx/css {:mvn/version "1.1.0"}}
  :aliases {:uberjar {:extra-deps {seancorfield/depstar {:mvn/version "0.5.2"}}
                      :main-opts ["-m" "hf.depstar.uberjar" "dist/image-organizer.jar"]}}}

@@ -5,7 +5,8 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [cljfx "1.7.6"]
-                 [clj-commons/fs "1.5.2"]]
+                 [clj-commons/fs "1.5.2"]
+                 [cljfx/css "1.1.0"]]
   :main ^:skip-aot image-organizer.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
