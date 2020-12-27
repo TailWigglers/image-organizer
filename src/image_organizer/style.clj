@@ -1,6 +1,5 @@
 (ns image-organizer.style
-  (:require [cljfx.css :as css]
-            [clojure.java.io :as io]))
+  (:require [cljfx.css :as css]))
 
 (def style
   (css/register

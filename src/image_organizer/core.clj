@@ -44,5 +44,5 @@
 (defn -main
   "Main entry point. Turns of repl mode so when the application
    is closed, JavaFX is shutdown and shutdown-agents is called"
-  [& args]
+  []
   (swap! *state assoc :is-repl? false))

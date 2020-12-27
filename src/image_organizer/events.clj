@@ -1,6 +1,5 @@
 (ns image-organizer.events
   (:require [cljfx.api :as fx]
-            [clojure.java.io :as io]
             [image-organizer.util :as util :refer [try-it]]
             [me.raynes.fs :as fs])
   (:import [javafx.stage DirectoryChooser]
