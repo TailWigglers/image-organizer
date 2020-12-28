@@ -21,8 +21,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: Image Organizer_1.0-1_amd64.deb
-          asset_name: Image Organizer_1.0-1_amd64.deb
+          asset_path: image-organizer_1.0-1_amd64.deb
+          asset_name: image-organizer.deb
           asset_content_type: application/vnd.debian.binary-package
   build-dmg:
     runs-on: macos-latest
@@ -42,7 +42,7 @@ jobs:
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: Image Organizer-1.0.dmg
-          asset_name: Image Organizer-1.0.dmg
+          asset_name: image-organizer.dmg
           asset_content_type: application/x-apple-diskimage
   build-exe:
     runs-on: windows-latest
@@ -60,5 +60,5 @@ jobs:
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: Image Organizer-1.0.exe
-          asset_name: Image Organizer-1.0.exe
+          asset_name: image-organizer.exe
           asset_content_type: application/vnd.microsoft.portable-executable
