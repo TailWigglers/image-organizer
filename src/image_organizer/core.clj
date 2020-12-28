@@ -22,7 +22,7 @@
     :exception nil
     :is-repl? true
     :logo-image nil
-    :version "1.00"
+    :version "v1.00"
     :app-name "Image Organizer"}))
 
 (def event-handler
