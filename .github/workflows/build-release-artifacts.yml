@@ -20,8 +20,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: Image Organizer-1.0-1_amd64.deb
-          asset_name: Image Organizer-1.0-1_amd64.deb
+          asset_path: Image Organizer_1.0-1_amd64.deb
+          asset_name: Image Organizer_1.0-1_amd64.deb
           asset_content_type: application/vnd.debian.binary-package
   build-dmg:
     runs-on: macos-latest
