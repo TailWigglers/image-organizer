@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 
+## [1.02] - 2020-12-29
+
+### Changed
+- Changed application name from `Image Organizer` to `image-organizer`
+
+### Fixed
+- Problem with linux installation
+
 ## [1.01] - 2020-12-29
 
 ### Added
@@ -16,6 +24,7 @@ All notable changes to this project will be documented in this file. The format 
 
 Initial version.
 
-[Unreleased]: https://github.com/TailWigglers/image-organizer/compare/v1.01...HEAD
+[Unreleased]: https://github.com/TailWigglers/image-organizer/compare/v1.02...HEAD
+[1.02]: https://github.com/TailWigglers/image-organizer/compare/v1.01...v1.02
 [1.01]: https://github.com/TailWigglers/image-organizer/compare/v1.00...v1.01
 [1.00]: https://github.com/TailWigglers/image-organizer/releases/tag/v1.00
