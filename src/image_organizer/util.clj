@@ -106,7 +106,7 @@
 (defn logo-image-url
   "Load the URL of the logo image file"
   []
-  (str (io/resource "Image Organizer.png")))
+  (str (io/resource "image-organizer.png")))
 
 (defn file->url
   "Gets the URL of a file"
