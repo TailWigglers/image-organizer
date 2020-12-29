@@ -14,4 +14,5 @@ pom.xml.asc
 *.DS_Store
 /.cpcache
 *.dmg
+*.exe
 /.clj-kondo/.cache

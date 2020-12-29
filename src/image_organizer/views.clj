@@ -3,7 +3,7 @@
             [cljfx.css :as css]
             [image-organizer.events :as events]
             [image-organizer.util :as util]
-            [image-organizer.style :refer [style]])
+            [image-organizer.style :refer [fonts style]])
   (:import [javafx.geometry Insets]))
 
 #_(defn button-with-dialog
@@ -65,7 +65,7 @@
      {:fx/type :scene
       :on-width-changed {:event/type ::events/scene-width}
       :on-height-changed {:event/type ::events/scene-height}
-      :stylesheets [(::css/url style)]
+      :stylesheets [(::css/url fonts) (::css/url style)]
       :root
       {:fx/type :v-box
        :children

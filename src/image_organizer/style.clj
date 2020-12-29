@@ -1,10 +1,17 @@
 (ns image-organizer.style
-  (:require [cljfx.css :as css]))
+  (:require [cljfx.css :as css]
+            [clojure.java.io :as io]))
+
+(def fonts
+  (css/register
+    ::fonts
+    {"@font-face" {:font-family "Roboto"
+                   :src (str "url('" (io/resource "Roboto.ttf") "')")}}))
 
 (def style
   (css/register
    ::style
-   {".root" {:-fx-font-family "Arial"
+   {".root" {:-fx-font-family "Roboto"
              :-fx-font-size "14px"}
     ".border-pane" {:-fx-background-color "#0f1114"}
     ".tool-bar" {:-fx-background-color "#272c35"
