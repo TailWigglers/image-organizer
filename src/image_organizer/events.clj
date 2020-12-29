@@ -48,7 +48,7 @@
                     input-folder
                     output-folder]} properties
             image-files (util/load-image-files input-folder)
-            loaded-image (util/stream (first image-files))]
+            loaded-image (util/file->url (first image-files))]
         (with-exception-handling
           loaded-image state
           (util/create-subfolders output-folder categories)
@@ -85,7 +85,7 @@
           maybe-exception state
           (let [input-folder (:input-folder state)
                 next-image-file (second image-files)
-                loaded-image (util/stream next-image-file)]
+                loaded-image (util/file->url next-image-file)]
             (with-exception-handling
               loaded-image state
               {:state
@@ -105,7 +105,7 @@
       {:state state}
       (let [image-file (first image-files)
             next-image-file (second image-files)
-            loaded-image (util/stream next-image-file)]
+            loaded-image (util/file->url next-image-file)]
         (with-exception-handling
           loaded-image state
           {:state
@@ -130,10 +130,10 @@
                 image-name (:name last-event)
                 image-file (fs/file (str source-folder "/" image-name))
                 destination-file (fs/file (str destination-folder "/" image-name))
-                maybe-extension (fs/move image-file destination-file)]
+                maybe-exception (fs/move image-file destination-file)]
             (with-exception-handling
-              maybe-extension state
-              (let [loaded-image (util/stream destination-file)]
+              maybe-exception state
+              (let [loaded-image (util/file->url destination-file)]
                 (with-exception-handling
                   loaded-image state
                   {:state (-> state
@@ -142,7 +142,7 @@
                               (update :undo-history pop))}))))
           :skip
           (let [previous-image-file (:image-file last-event)
-                loaded-image (util/stream previous-image-file)]
+                loaded-image (util/file->url previous-image-file)]
             (with-exception-handling
               loaded-image state
               {:state (-> state
@@ -160,7 +160,7 @@
         (case folder-key
           :input-folder
           (let [image-files (util/load-image-files folder-path)
-                loaded-image (util/stream (first image-files))]
+                loaded-image (util/file->url (first image-files))]
             (with-exception-handling
               loaded-image state
               {:state (-> state
@@ -180,7 +180,7 @@
 (defmethod event-handler ::close-select-categories
   [{:keys [state]}]
   (let [image-file (first (:image-files state))
-        loaded-image (util/stream image-file)]
+        loaded-image (util/file->url image-file)]
     (with-exception-handling
       loaded-image state
       {:state (-> state
@@ -228,7 +228,7 @@
 
 (defmethod event-handler ::open-about
   [{:keys [state]}]
-  (let [logo-image (util/load-logo-image)]
+  (let [logo-image (util/logo-image-url)]
     (with-exception-handling
       logo-image state
       {:state (-> state
@@ -238,7 +238,7 @@
 (defmethod event-handler ::close-about
   [{:keys [state]}]
   (let [image-file (first (:image-files state))
-        loaded-image (util/stream image-file)]
+        loaded-image (util/file->url image-file)]
     (with-exception-handling
       loaded-image state
       {:state (-> state

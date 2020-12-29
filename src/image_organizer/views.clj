@@ -27,7 +27,7 @@
   {:fx/type :image-view
    :style-class "border-pane"
    :image {:fx/type :image
-           :is loaded-image}
+           :url loaded-image}
    :x 0
    :y 0
    :fit-width width
@@ -296,7 +296,7 @@
          :text "Loading..."}
         {:fx/type :image-view
          :image {:fx/type :image
-                 :is logo-image}
+                 :url logo-image}
          :x 0
          :y 0
          :fit-width 200

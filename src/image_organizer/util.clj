@@ -86,13 +86,6 @@
   [e]
   (with-out-str (cs/print-stack-trace e)))
 
-(defn stream
-  "Loads an image from a file"
-  [file]
-  (if (nil? file)
-    nil
-    (try-it (io/input-stream file))))
-
 (defn valid-category?
   "Makes sure the category is valid"
   [typed-text categories]
@@ -110,6 +103,13 @@
   (let [symbol (str character)]
     (some #(= % symbol) invalid-symbols)))
 
-(defn load-logo-image
+(defn logo-image-url
+  "Load the URL of the logo image file"
   []
-  (try-it (io/input-stream (io/resource "Image Organizer.png"))))
+  (str (io/resource "Image Organizer.png")))
+
+(defn file->url
+  "Gets the URL of a file"
+  [file]
+  (when (some? file)
+    (str (.toURL (.toURI file)))))
