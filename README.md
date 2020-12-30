@@ -2,7 +2,7 @@
 
 An application for sorting images into categories.
 
-![](https://raw.githubusercontent.com/TailWigglers/image-organizer/master/screenshots/app.png)
+![Application Screenshot](https://raw.githubusercontent.com/TailWigglers/image-organizer/master/screenshots/app.png)
 
 ## Supported Operating Systems
 
