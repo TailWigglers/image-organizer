@@ -1,6 +1,59 @@
 # image-organizer
 
-An application for sorting images into categories
+An application for sorting images into categories.
+
+![](https://raw.githubusercontent.com/TailWigglers/image-organizer/master/screenshots/app.png)
+
+## Supported Operating Systems
+
+- Windows
+- MacOS
+- Linux (Debian/Ubuntu)
+
+## Installation
+
+### Windows
+
+- Download the `.exe` file from the [latest release](https://github.com/TailWigglers/image-organizer/releases/latest).
+- Run the downloaded file. If a security dialog appears, allow the application to run anyways.
+- Go through the standard install process.
+- Run the application using the desktop shortcut or from the start menu.
+
+### MacOS
+
+- Download the `.dmg` file from the [latest release](https://github.com/TailWigglers/image-organizer/releases/latest).
+- Open the `.dmg` and drag the application into the `Applications` folder.
+- Open the application. If a security dialog appears, click `Cancel`, then inside settings, open `Security & Privacy` and run the application anyways.
+
+### Linux (Debian/Ubuntu)
+
+- Download the `.deb` file from the [latest release](https://github.com/TailWigglers/image-organizer/releases/latest).
+- Install using your package manager.
+- Run the application.
+
+## Usage
+
+- Select an input folder.
+  - The input folder should contain the images you would like to organize.
+- Select an output folder.
+  - The output folder is where images will be moved to.
+- Add categories.
+  - For each category, the application will create a folder inside the output folder.
+- Click corresponding category buttons to sort images into categories.
+  - The image will be moved to corresponding folder inside the output folder.
+
+## Example
+
+For the image above, the output folder would end up looking like this:
+
+```bash
+Output
+├─ Landscape
+├─ Portrait
+├─ Macro
+├─ Wildlife
+└─ Abstract
+```
 
 ## Compilation
 
@@ -13,21 +66,6 @@ Requirements:
 clone https://github.com/TailWigglers/image-organizer.git
 cd image-organizer
 ./build.sh
-```
-
-## Usage
-
-Run the executable created during the build process. Application configuration
-is read from `properties.edn`, and this needs to be placed in the home directory.
-
-## Examples
-
-Example `properties.edn`:
-
-```clojure
-{:categories ["landscape" "portrait" "city"]
- :input-folder "/Users/Mustermann/Pictures/Input"
- :output-folder "/Users/Mustermann/Pictures/Output"}
 ```
 
 ## License
