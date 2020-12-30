@@ -6,18 +6,21 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [1.02] - 2020-12-29
 
-### Changed
+**Changed**
+
 - Changed application name from `Image Organizer` to `image-organizer`
 
-### Fixed
+**Fixed**
+
 - Problem with linux installation
 
 ## [1.01] - 2020-12-29
 
-### Added
+**Added**
+
 - Added and started using Roboto font
 
-### Fixed
+**Fixed**
 - Error on Windows when trying to organize images into categories
 
 ## [1.00] - 2020-12-28
