@@ -68,6 +68,11 @@ cd image-organizer
 ./build.sh
 ```
 
+## TODO
+
+- Preview of the next few images
+- Keyboard control
+
 ## License
 
 Copyright © 2020 Tail Wigglers
